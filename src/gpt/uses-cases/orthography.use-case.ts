@@ -4,9 +4,8 @@ interface Options {
     prompt: string;
 }
 
-export const orthographyCheckUseCase = async (openai: OpenAI, options: Options) => {
-    const { prompt } = options;
-
+export const orthographyCheckUseCase = async (openai: OpenAI, { prompt }: Options) => {
+    
     const completion = await openai.chat.completions.create({
         messages: [
             { 
