@@ -18,7 +18,7 @@ export const prosConsStreamUseCase = async (openai: OpenAI, { prompt }: Options)
                     cada pro y contra con un emoticon que sea representativo de la ventaja o contra que se describe.
                     La respuesta brindada debe ser de fácil lectura, 
                     los párrafos deben estar espaciados con saltos de linea.
-                    Los elementos a comparar deben en mayúscula, negrita, una línea divisoria.
+                    Los elementos a comparar deben estar en mayúscula, negrita, una línea divisoria.
                     Las palabras Pros y Contas deben estar en negrita.
                 ` 
             },
@@ -29,6 +29,6 @@ export const prosConsStreamUseCase = async (openai: OpenAI, { prompt }: Options)
         ],
         model: "gpt-4o",
         temperature: 0.1,
-        max_tokens: 600,
+        max_tokens: 300,
     });
 };

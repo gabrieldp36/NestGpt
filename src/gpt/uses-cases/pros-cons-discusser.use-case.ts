@@ -17,7 +17,7 @@ export const prosConsDicusserUseCase = async (openai: OpenAI, { prompt }: Option
                     cada pro y contra con un emoticon que sea representativo de la ventaja o contra que se describe.
                     La respuesta brindada debe ser de fácil lectura, 
                     los párrafos deben estar espaciados con saltos de linea.
-                    Los elementos a comparar deben en mayúscula, negrita, tamaño de letra 2 ##, una línea divisoria.
+                    Los elementos a comparar deben estar en mayúscula, negrita, una línea divisoria.
                     Las palabras Pros y Contas deben estar en negrita.
                 ` 
             },
