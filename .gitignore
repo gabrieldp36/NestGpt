@@ -3,6 +3,10 @@
 /node_modules
 /build
 
+# Exclude generated content
+
+/generated/audios
+
 # Logs
 logs
 *.log
