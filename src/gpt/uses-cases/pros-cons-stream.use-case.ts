@@ -29,6 +29,5 @@ export const prosConsStreamUseCase = async (openai: OpenAI, { prompt }: Options)
         ],
         model: "gpt-4o",
         temperature: 0.1,
-        max_tokens: 300,
     });
 };
