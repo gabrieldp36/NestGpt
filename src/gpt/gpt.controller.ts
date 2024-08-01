@@ -1,7 +1,11 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, Res } from '@nestjs/common';
-import type { Response } from 'express';
+import { Body, Controller, Get, HttpStatus, Param, Post, Req, Res, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer'
+import { v4 as uuidv4 } from 'uuid';
+import type { Request, Response } from 'express';
 import { GptService } from './gpt.service';
-import { OrthographyDto, ProsConsDiscusserDto, TextToAudioDto, TranslateDto } from './dtos';
+import { AudioToTextDto, OrthographyDto, ProsConsDiscusserDto, TextToAudioDto, TranslateDto } from './dtos';
+
 
 @Controller('gpt')
 export class GptController {
@@ -79,5 +83,41 @@ export class GptController {
     res.setHeader('Content-Type', 'audio/mp3');
     res.status(HttpStatus.OK);
     res.sendFile(filePath);
+  };
+
+  @Post('audio-to-text')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: { fileSize: 1000 * 1024 * 5 }, // Hasta 5 MB.
+      fileFilter: (req, file, callback) => {
+        const types: string[] = ['audio'];
+        if( !types.includes(file.mimetype.split('/').shift()) ) {
+          return callback(null, false);
+        };
+        return callback(null, true);
+      },
+      storage: diskStorage({
+        destination: './generated/uploads',
+        filename: (req, file, callback) => { 
+          const fileExtension: string = file.originalname.split('.').pop();
+          const filename: string = `${uuidv4()}.${fileExtension}`;
+          return callback(null, filename);
+        },
+      }),
+    }),
+  )
+  public async audioToText(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() audioToTextDto: AudioToTextDto,
+  )
+  {
+    if(!req.file) {
+      res.status(HttpStatus.BAD_REQUEST);
+      return res.json({ msg: 'Archivo no permitido. Solo se admiten archivos de tipo audio/*' });
+    };
+
+    const response = await this.gptService.audioToText(req.file, audioToTextDto);
+    return res.status(HttpStatus.OK).json(response);
   };
 } 
