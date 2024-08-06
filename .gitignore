@@ -6,6 +6,7 @@
 # Exclude generated content
 
 /generated/audios
+/generated/images
 
 # Logs
 logs

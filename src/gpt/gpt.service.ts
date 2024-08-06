@@ -1,9 +1,8 @@
-import * as path from "path";
-import * as fs from "fs";
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import OpenAI from "openai";
-import { audioToTextUseCase, orthographyCheckUseCase, prosConsDicusserUseCase, prosConsStreamUseCase, textToAudioUseCase, translateUseCase, } from './uses-cases';
-import { AudioToTextDto, OrthographyDto, ProsConsDiscusserDto, TextToAudioDto, TranslateDto } from './dtos';
+import { audioToTextUseCase, imageGenerationUseCase, imageVariationUseCase, orthographyCheckUseCase, prosConsDicusserUseCase, prosConsStreamUseCase, textToAudioUseCase, translateUseCase, } from './uses-cases';
+import { AudioToTextDto, ImageGenarationDto, ImageVariationDto, OrthographyDto, ProsConsDiscusserDto, TextToAudioDto, TranslateDto } from './dtos';
+import { getterFile } from "src/helpers/getter-file";
 
 @Injectable()
 export class GptService {
@@ -35,14 +34,24 @@ export class GptService {
     };
 
     public async textToAudioGetter(fileId: string) { 
-        const filePath = path.resolve(__dirname, '../../generated/audios/', `${fileId}.mp3`);
-        if ( !fs.existsSync(filePath) ) throw new NotFoundException(`No se ha encontrado el archivo con id ${fileId}`);
-        return filePath;
+        return getterFile('../../generated/audios/', fileId, 'mp3');;
     };
 
     
-    public async audioToText( audioFile: Express.Multer.File, audioToTextDto: AudioToTextDto) {
+    public async audioToText(audioFile: Express.Multer.File, audioToTextDto: AudioToTextDto) {
         const { prompt } = audioToTextDto;
         return await audioToTextUseCase( this.openai, { audioFile, prompt } );
+    };
+
+    public async imageGeneration(imageGenarationDto:ImageGenarationDto) {
+        return await imageGenerationUseCase( this.openai, {...imageGenarationDto} );
+    };
+ 
+    public async imageVariation({ baseImage }:ImageVariationDto) {
+        return await imageVariationUseCase( this.openai, { baseImage } );
+    };
+
+    public async imageGenerationGetter(fileName: string) { 
+        return getterFile('../../generated/images/', fileName);
     };
 }
