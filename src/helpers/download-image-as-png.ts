@@ -46,7 +46,7 @@ export const downloadBase64ImageAsPng = async (base64Image: string) => {
     
     // Transformar a RGBA, png // Así lo espera OpenAI
     const completePath = path.join(folderPath, imgNamePng);
-    await sharp(imageBuffer).png().ensureAlpha().toFile(completePath);
+    await sharp(imageBuffer).png().ensureAlpha().resize(1024,1024).toFile(completePath);
   
     return {
         fileName: imgNamePng,

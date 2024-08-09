@@ -15,7 +15,12 @@ async function bootstrap() {
   );
 
   // Configuración de las Cors.
-  app.enableCors();
+  app.enableCors({
+    origin: "*", 
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    allowedHeaders: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  });
 
   // Parseo del body.
   app.use( bodyParser.json({limit: '10mb'}) );
