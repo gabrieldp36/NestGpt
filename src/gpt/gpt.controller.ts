@@ -145,4 +145,40 @@ export class GptController {
     res.status(HttpStatus.OK);
     res.sendFile(filePath);
   };
+
+  @Post('extract-text-from-image')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: { fileSize: 1000 * 1024 * 2 }, // Hasta 5 MB.
+      fileFilter: (req, file, callback) => {
+        const types: string[] = ['image'];
+        if( !types.includes(file.mimetype.split('/').shift()) ) {
+          return callback(null, false);
+        };
+        return callback(null, true);
+      },
+      storage: diskStorage({
+        destination: './generated/uploads',
+        filename: (req, file, callback) => { 
+          const fileExtension: string = file.originalname.split('.').pop();
+          const filename: string = `${uuidv4()}.${fileExtension}`;
+          return callback(null, filename);
+        },
+      }),
+    }),
+  )
+  public async extractTextFromImage(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body('prompt') prompt: string,
+  ) {
+
+    if(!req.file) {
+      res.status(HttpStatus.BAD_REQUEST);
+      return res.json({ msg: 'Archivo no permitido. Solo se admiten archivos de tipo image/*' });
+    };
+
+    const response = await this.gptService.imageToText(req.file, prompt);;
+    return res.status(HttpStatus.OK).json(response);
+  };
 } 
